@@ -31,7 +31,7 @@
 - name: Copy custom configurations
   template:
     src: "{{ item }}"
-    dest: "/etc/google-fluentd/config.d/{{ item | basename }}"
+    dest: "/etc/google-fluentd/config.d/{{ item | basename | regex_search('(.+\.conf)\.j2') }}"
     backup: yes
   with_items: "{{ google_fluent_custom_config_templates }}"
 
