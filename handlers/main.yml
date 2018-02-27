@@ -1,0 +1,6 @@
+---
+
+- name: restart google-fluentd
+  service:
+    name: google-fluentd
+    state: restarted

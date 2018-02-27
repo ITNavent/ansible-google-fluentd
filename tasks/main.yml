@@ -1,0 +1,30 @@
+---
+
+- name: Download the Logging Agent
+  get_url:
+    url: https://dl.google.com/cloudagents/install-logging-agent.sh
+    dest: "/tmp/install-logging-agent.sh"
+    mode: "+x"
+
+- name: Install the Logging Agent
+  shell: "/tmp/install-logging-agent.sh"
+
+- name: Copy configuration file
+  template:
+    src: google-fluentd.conf.j2
+    dest: "/etc/google-fluentd/google-fluentd.conf"
+    backup: yes
+  notify: restart google-fluentd
+
+- name: Create active configurations folder
+  file:
+    path: "/etc/google-fluentd/config-active.d"
+    state: directory
+
+- name: Active configurations
+  file:
+    path: "/etc/google-fluentd/config-active.d/{{ item }}.conf"
+    src: "/etc/google-fluentd/config.d/{{ item }}.conf"
+    state: link
+  with_items: "{{ google_fluent_active_configs }}"
+  notify: restart google-fluentd
