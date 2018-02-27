@@ -2,13 +2,21 @@
 
 Ansible role that installs Google Logging Agent (Fluentd)
 
-# Variables
+## Variables
 
++ Active configurations. syslog and syslog_endpoint enabled by default.
 ```yaml
-google_fluent_extra_configs_path: ""    # Adds this directory to fluentd lookup places for configurations. Undefined by default
-google_fluent_active_configs:           # Active configurations. syslog and syslog_endpoint enabled by default.
+google_fluent_active_configs:           
   - syslog
   - syslog_endpoint
+```
++ Copies this files to the configurations folder. They are not enabled by default, so you must add them to the ```google_fluent_active_configs``` list.
+```yaml
+google_fluent_custom_config_files: []
+```
++ Copies this templates to the configurations folder. They are not enabled by default, so you must add them to the ```google_fluent_active_configs``` list.
+```yaml
+google_fluent_custom_config_templates: []
 ```
 
 ## Available configuration

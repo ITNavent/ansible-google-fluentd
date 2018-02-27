@@ -4,10 +4,7 @@
 #
 # An example "catch-all" configuration can be found at
 # https://github.com/GoogleCloudPlatform/fluentd-catch-all-config
-@include {{ google_fluent_active_configs_path }}/*.conf
-{% if google_fluent_extra_configs_path is defined %}
-@include {{ google_fluent_extra_configs_path }}/*.conf
-{% endif %}
+@include /etc/google-fluentd/config-active.d/*.conf
 
 # Prometheus monitoring.
 <source>

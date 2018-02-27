@@ -3,3 +3,6 @@
 google_fluent_active_configs:
   - syslog
   - syslog_endpoint
+
+google_fluent_custom_config_files: []
+google_fluent_custom_config_templates: []
