@@ -1,0 +1,51 @@
+---
+
+- name: Check if Logging Agent is installed
+  stat:
+    path: "/opt/google-fluentd/usr/sbin/google-fluentd"
+  register: google_fluentd_installed
+
+- name: Download the Logging Agent
+  get_url:
+    url: https://dl.google.com/cloudagents/install-logging-agent.sh
+    dest: "/tmp/install-logging-agent.sh"
+    mode: "+x"
+  when: google_fluentd_installed.stat.exists == False
+
+- name: Install the Logging Agent
+  shell: "/tmp/install-logging-agent.sh"
+  when: google_fluentd_installed.stat.exists == False
+
+- name: Create active configurations folder
+  file:
+    path: "/etc/google-fluentd/config-active.d"
+    state: directory
+
+- name: Copy configuration file
+  template:
+    src: google-fluentd.conf.j2
+    dest: "/etc/google-fluentd/google-fluentd.conf"
+    backup: yes
+  notify: restart google-fluentd
+
+- name: Copy custom configurations
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/google-fluentd/config.d/{{ item | basename }}"
+    backup: yes
+  with_items: "{{ google_fluent_custom_config_files }}"
+
+- name: Copy custom configurations
+  template:
+    src: "{{ item }}"
+    dest: "/etc/google-fluentd/config.d/{{ item | basename | regex_search('(.+\\.conf)') }}"
+    backup: yes
+  with_items: "{{ google_fluent_custom_config_templates }}"
+
+- name: Active configurations
+  file:
+    path: "/etc/google-fluentd/config-active.d/{{ item }}.conf"
+    src: "/etc/google-fluentd/config.d/{{ item }}.conf"
+    state: link
+  with_items: "{{ google_fluent_active_configs }}"
+  notify: restart google-fluentd
