@@ -6,3 +6,5 @@ google_fluent_active_configs:
 
 google_fluent_custom_config_files: []
 google_fluent_custom_config_templates: []
+
+google_fluent_custom_config_folder: ''
