@@ -19,6 +19,11 @@ google_fluent_custom_config_files: []
 google_fluent_custom_config_templates: []
 ```
 
++ Adds this folder as a configuration folder. Every *.conf file in this folder will be included.
+```yaml
+google_fluent_custom_config_folder: ''
+```
+
 ## Available configuration
 
 Values for ```google_fluent_active_configs``` must come from this list:
