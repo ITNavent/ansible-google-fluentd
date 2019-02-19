@@ -5,7 +5,7 @@
 # An example "catch-all" configuration can be found at
 # https://github.com/GoogleCloudPlatform/fluentd-catch-all-config
 @include /etc/google-fluentd/config-active.d/*.conf
-{% if google_fluend_custom_config_folder != '' %}
+{% if google_fluent_custom_config_folder != '' %}
 @include {{ google_fluent_custom_config_folder }}/*.conf
 {% endif %}
 
