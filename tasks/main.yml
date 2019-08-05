@@ -34,6 +34,7 @@
     dest: "/etc/google-fluentd/config.d/{{ item | basename }}"
     backup: yes
   with_items: "{{ google_fluent_custom_config_files }}"
+  notify: restart google-fluentd
 
 - name: Copy custom configurations
   template:
@@ -41,6 +42,7 @@
     dest: "/etc/google-fluentd/config.d/{{ item | basename | regex_search('(.+\\.conf)') }}"
     backup: yes
   with_items: "{{ google_fluent_custom_config_templates }}"
+  notify: restart google-fluentd
 
 - name: Active configurations
   file:
