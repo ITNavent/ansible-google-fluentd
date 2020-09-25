@@ -4,3 +4,8 @@
   service:
     name: google-fluentd
     state: restarted
+
+- name: restart rsyslog
+  service:
+    name: rsyslog.service
+    state: restarted

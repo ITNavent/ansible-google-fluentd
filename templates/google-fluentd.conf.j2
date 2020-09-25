@@ -18,6 +18,24 @@
   @type prometheus_monitor
 </source>
 
+{% if google_fluentd_journald_monitoring_services|length > 0 %}
+# Add filter for journald services
+<filter **>
+  @type systemd_entry
+  fields_lowercase true
+  fields_strip_underscores true
+</filter>
+<filter **>
+  @type record_transformer
+  enable_ruby
+  <record>
+  {%- raw %}
+    severity ${{"0" => "EMERGENCY", "1" => "ALERT", "2" => "CRITICAL", "3" => "ERROR", "4" => "WARNING", "5" => "NOTICE", "6" => "INFO", "7" => "DEBUG"}[record["priority"]]}
+  {% endraw -%}
+
+  </record>
+</filter>
+{% endif %}
 # Do not collect fluentd's own logs to avoid infinite loops.
 <match fluent.**>
   @type null
@@ -26,6 +44,13 @@
 # Configure all sources to output to Google Cloud Logging
 <match **>
   @type google_cloud
+  {% if google_fluentd_not_gcp_vm %}
+# Set parameters if we use not GCP VM
+  project_id {{ google_fluentd_gcp_project_id }}
+  vm_id {{ ansible_hostname }}
+  zone {{ google_fluentd_gcp_zone }}
+  {% endif %}
+
   # Set the chunk limit conservatively to avoid exceeding the recommended
   # chunk size of 5MB per write request.
   buffer_chunk_limit 1M

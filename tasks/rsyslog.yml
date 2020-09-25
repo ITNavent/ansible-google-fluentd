@@ -1,0 +1,11 @@
+---
+
+- name: Setup rsyslog to print severity in log message
+  replace:
+    dest: /etc/rsyslog.conf
+    regexp: '^\$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat'
+    replace: |-
+      #$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+      $template googlelogger,"%syslogseverity% %timegenerated% %HOSTNAME% %syslogtag% %msg%\\n"
+      $ActionFileDefaultTemplate googlelogger
+  notify: restart rsyslog

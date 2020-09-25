@@ -1,0 +1,21 @@
+---
+- name: Copy journald services configs
+  template:
+    src: journald.conf.j2
+    dest: "/etc/google-fluentd/config-active.d/{{ item }}"
+  with_items: "{{ google_fluentd_journald_monitoring_services }}"
+  notify: restart google-fluentd
+
+- name: Capture not enabled configs
+  find:
+    paths: "/etc/google-fluentd/config-active.d/"
+    file_type: file
+    excludes: "{{ google_fluentd_journald_monitoring_services }}"
+  register: not_enabled_journald_configs
+
+- name: Remove not enabled configs
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ not_enabled_journald_configs['files'] }}"
+  notify: restart google-fluentd

@@ -1,0 +1,10 @@
+---
+- name: Create directory for creds
+  file:
+    state: directory
+    path: /etc/google/auth/
+
+- name: Copy creds file for not GCP VM
+  copy:
+    src: "{{ google_fluentd_gcp_cred_file }}"
+    dest: /etc/google/auth/application_default_credentials.json

@@ -8,3 +8,11 @@ google_fluent_custom_config_files: []
 google_fluent_custom_config_templates: []
 
 google_fluent_custom_config_folder: ''
+google_fluentd_not_gcp_vm: false
+google_fluentd_gcp_project_id: ""
+google_fluentd_gcp_zone: ""
+google_fluentd_gcp_cred_file: ""
+google_fluentd_setup_rsyslog_for_gcp: false
+google_fluentd_install_additional_gems: false
+google_fulentd_additional_gems_list: []
+google_fluentd_journald_monitoring_services: []
