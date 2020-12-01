@@ -5,15 +5,27 @@
     path: "/opt/google-fluentd/usr/sbin/google-fluentd"
   register: google_fluentd_installed
 
-- name: Download the Logging Agent
+- name: Download the Logging Agent repo
   get_url:
-    url: https://dl.google.com/cloudagents/install-logging-agent.sh
-    dest: "/tmp/install-logging-agent.sh"
+    url: https://dl.google.com/cloudagents/add-logging-agent-repo.sh
+    dest: "/tmp/add-logging-agent-repo.sh"
     mode: "+x"
   when: google_fluentd_installed.stat.exists == False
 
+- name: Install the Logging Agent repo
+  shell: "/tmp/add-logging-agent-repo.sh"
+  when: google_fluentd_installed.stat.exists == False
+
 - name: Install the Logging Agent
-  shell: "/tmp/install-logging-agent.sh"
+  apt:
+    name: google-fluentd
+    state: installed
+  when: google_fluentd_installed.stat.exists == False
+
+- name: Install the Logging Agent Configurations
+  apt:
+    name: google-fluentd-catch-all-config
+    state: installed
   when: google_fluentd_installed.stat.exists == False
 
 - name: Create active configurations folder
