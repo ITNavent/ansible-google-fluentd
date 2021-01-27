@@ -41,6 +41,10 @@
     backup: yes
   notify: restart google-fluentd
 
+- name: Include specific for not GCP VM playbook
+  include: not_gcp_vm.yml
+  when: google_fluentd_not_gcp_vm
+
 - name: Copy custom configurations
   copy:
     src: "{{ item }}"
@@ -59,8 +63,47 @@
 
 - name: Active configurations
   file:
-    path: "/etc/google-fluentd/config-active.d/{{ item }}.conf"
-    src: "/etc/google-fluentd/config.d/{{ item }}.conf"
+    path: "/etc/google-fluentd/config-active.d/{{ item }}"
+    src: "/etc/google-fluentd/config.d/{{ item }}"
     state: link
   with_items: "{{ google_fluent_active_configs }}"
   notify: restart google-fluentd
+
+- name: Capture not enabled configs
+  find:
+    paths: "/etc/google-fluentd/config-active.d/"
+    file_type: link
+    excludes: "{{ google_fluent_active_configs }}"
+  register: not_enabled_configs
+
+- name: Remove not enabled configs
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ not_enabled_configs['files'] }}"
+  notify: restart google-fluentd
+
+- name: Include tasks to setup rsyslog for GCP logging
+  include: rsyslog.yml
+  when: google_fluentd_setup_rsyslog_for_gcp
+
+- name: Install ruby dependencies
+  apt:
+    pkg:
+      - gcc
+      - make
+      - ruby
+      - ruby-dev
+  when: google_fluentd_install_additional_gems
+
+- name: Install fluentd additionals gems
+  gem:
+    name: "{{ item.name }}"
+    version: "{{ item.version }}"
+  when: google_fluentd_install_additional_gems
+  with_items: "{{ google_fulentd_additional_gems_list }}"
+  notify: restart google-fluentd
+
+- name: Include journald-specific configuration.yml
+  include: journald.yml
+  when: google_fluentd_journald_monitoring_services|length > 0

@@ -1,0 +1,11 @@
+<source>
+  @type systemd
+  tag journald-{{ ansible_hostname }}
+  path /var/log/journal/
+  read_from_head false
+
+  <storage>
+    @type local
+    path /var/log/fluentd-journald-{{ ansible_hostname }}-cursor.json
+  </storage>
+</source>

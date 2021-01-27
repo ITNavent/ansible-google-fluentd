@@ -1,0 +1,11 @@
+<source>
+  @type tail
+  path /var/log/syslog
+
+  # Parse the severity level, timestamp, service name and message from syslog
+  format /^(?<priority>[0-9]*) (?<time>[^ ]*\s*[^ ]* [^ ]*) (?<message>(?<host>[^ ]*) (?<service>[a-zA-Z0-9_\/\.\-\[\]]*): .*)$/
+
+  pos_file /var/lib/google-fluentd/pos/syslog.pos
+  read_from_head true
+  tag syslog
+</source>

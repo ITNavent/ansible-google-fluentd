@@ -1,0 +1,12 @@
+<source>
+  @type systemd
+  tag {{ ((item | splitext)[0] | splitext)[0] }}
+  path /var/log/journal/remote
+  matches [{ "_SYSTEMD_UNIT": "{{ (item | splitext)[0] }}" }]
+  read_from_head false
+
+  <storage>
+    @type local
+    path /var/log/fluentd-journald-{{ ((item | splitext)[0] | splitext)[0] }}-cursor.json
+  </storage>
+</source>
